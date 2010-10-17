@@ -1,4 +1,5 @@
-CFeedParser -- fast feed parser ==============================
+CFeedParser -- fast feed parser
+===============================
 
 ## Presentation
 
