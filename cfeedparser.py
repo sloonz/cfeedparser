@@ -14,10 +14,12 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+import os
 import ctypes
 import UserDict
 
-_lib = ctypes.cdll.LoadLibrary("_feedparser.so")
+_libpath = os.path.join(os.path.dirname(__file__), "_feedparser.so")
+_lib = ctypes.cdll.LoadLibrary(_libpath)
 
 def _copystr(s):
     if s == None:
