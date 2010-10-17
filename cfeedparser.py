@@ -133,6 +133,11 @@ Parser._get_error.restype = ctypes.c_char_p
 try:
     import fp_date, fp_encoding
     
+    try:
+        import feedparser
+    except ImportError:
+        feedparser = None
+    
     def parse(file_stream_or_string):
         def parse_dates(e):
             e['date'] = e['updated'] or e['created']
@@ -140,12 +145,18 @@ try:
                 e[k+'_parsed'] = e[k] and fp_date.parse_date(e[k])
 
         data = fp_encoding.fetch_feed(file_stream_or_string)
-        feed = Parser().parse_string(data)
+        try:
+            feed = Parser().parse_string(data)
+        except ParseError:
+            if feedparser:
+                return feedparser.parse(file_stream_or_string)
+            else:
+                raise
+        
         parse_dates(feed)
         for e in feed.entries: parse_dates(e)
         feed['feed'] = feed
         return feed
-    
 except ImportError:
     parse = None
 
@@ -175,6 +186,7 @@ if __name__ == "__main__":
                 f = p.parse_file(file)
         except ParseError, e:
             mprint("Error: %s", str(e))
+            continue
         
         mprint("%d entries.", len(f))
         for e in f:

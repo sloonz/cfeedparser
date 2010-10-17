@@ -123,7 +123,8 @@ class TestCase(unittest.TestCase):
       env = env.data
     except:
       pass
-    env['bozo'] = 0
+    if not 'bozo' in env:
+      env['bozo'] = 0
     if not eval(evalString, env):
       raise self.failureException, failure
   
