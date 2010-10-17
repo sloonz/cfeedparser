@@ -31,8 +31,8 @@ class _EntryStruct(ctypes.Structure):
                 ('link', ctypes.c_char_p),
                 ('summary', ctypes.c_char_p),
                 ('content', ctypes.c_char_p),
-                ('publication_date', ctypes.c_char_p),
-                ('modification_date', ctypes.c_char_p),
+                ('created', ctypes.c_char_p),
+                ('updated', ctypes.c_char_p),
                 ('subtitle', ctypes.c_char_p),
                 ('link_title', ctypes.c_char_p),
                 ('author_name', ctypes.c_char_p),
@@ -49,8 +49,8 @@ class _FeedStruct(ctypes.Structure):
                 ('link', ctypes.c_char_p),
                 ('link_title', ctypes.c_char_p),
                 ('id', ctypes.c_char_p),
-                ('publication_date', ctypes.c_char_p),
-                ('modification_date', ctypes.c_char_p),
+                ('created', ctypes.c_char_p),
+                ('updated', ctypes.c_char_p),
                 ('author_name', ctypes.c_char_p),
                 ('author_email', ctypes.c_char_p),
                 ('author_url', ctypes.c_char_p),
@@ -71,7 +71,6 @@ class Feed(UserDict.UserDict):
         UserDict.UserDict.__init__(self)
         self['entries_size'] = struct.entries_size
         self['entries'] = []
-        self['feed'] = self
         for i in range(self.entries_size):
             self['entries'].append(Entry(struct.entries[i].contents))
         for fieldname, fieldtype in _FeedStruct._fields_:
@@ -136,14 +135,15 @@ try:
     
     def parse(file_stream_or_string):
         def parse_dates(e):
-            e['date'] = e['modification_date']
-            for k in ('date', 'modification_date', 'publication_date'):
+            e['date'] = e['updated'] or e['created']
+            for k in ('date', 'updated', 'created'):
                 e[k+'_parsed'] = e[k] and fp_date.parse_date(e[k])
 
         data = fp_encoding.fetch_feed(file_stream_or_string)
         feed = Parser().parse_string(data)
         parse_dates(feed)
         for e in feed.entries: parse_dates(e)
+        feed['feed'] = feed
         return feed
     
 except ImportError:
@@ -183,8 +183,8 @@ if __name__ == "__main__":
             mprint("From: %s", e.author)
             mprint("URL: %s (%s)", e.link, e.link_title)
             mprint("ID: %s", e.id)
-            mprint("Created: %s", e.publication_date)
-            mprint("Modified: %s", e.modification_date)
+            mprint("Created: %s", e.created)
+            mprint("Modified: %s", e.updated)
             mprint()
             mprint("%s", e.content or e.summary)
         mprint()
