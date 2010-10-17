@@ -27,7 +27,6 @@ POSSIBILITY OF SUCH DAMAGE."""
 
 import unittest, new, os, sys, glob, re, urllib, string, posixpath, time, codecs, string
 import cfeedparser as feedparser
-import fp_date
 from UserDict import UserDict
 import SimpleHTTPServer, BaseHTTPServer
 from threading import *
@@ -181,20 +180,9 @@ def getDescription(xmlfile):
   description = xmlfile + ": " + description
   return TestCase.failUnlessEval, description, evalString, skipUnless
 
-def fp_parse(file):
-  def parse_dates(e):
-    e['date'] = e['modification_date']
-    for k in ('date', 'modification_date', 'publication_date'):
-      e[k+'_parsed'] = e[k] and fp_date.parse_date(e[k])
-  
-  feed = feedparser.parse(file)
-  parse_dates(feed)
-  for e in feed.entries: parse_dates(e)
-  return feed
-
 def buildTestCase(xmlfile, description, method, evalString):
   func = lambda self, xmlfile=xmlfile, method=method, evalString=evalString: \
-       method(self, evalString, fp_parse(xmlfile))
+       method(self, evalString, feedparser.parse(xmlfile))
   func.__doc__ = description
   return func
 
