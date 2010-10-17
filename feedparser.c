@@ -14,16 +14,16 @@
  */
 
 // ~ pkg: libxml-2.0 glib-2.0
-// ~ cflags: -O0 -g -Wall
+// ~ cflags: -O4 -Wall
 // ~ out: _feedparser.so
 // ~ ldflags: -shared
 
 #include <string.h>
 #include <ctype.h>
+#include <stdio.h>
 
 #include <glib.h>
 #include <libxml/parser.h>
-#include <stdio.h>
 
 #include "feedparser.h"
 
