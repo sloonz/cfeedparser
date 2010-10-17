@@ -163,7 +163,7 @@ if __name__ == "__main__":
             mprint("------------------------")
             mprint("Subject: %s", e.title)
             mprint("From: %s", e.author)
-            mprint("URL: %s", e.link)
+            mprint("URL: %s (%s)", e.link, e.link_title)
             mprint("ID: %s", e.id)
             mprint("Created: %s", e.publication_date)
             mprint("Modified: %s", e.publication_date)
