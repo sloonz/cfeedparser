@@ -148,7 +148,9 @@ try:
 
         data = fp_encoding.fetch_feed(file_stream_or_string)
         try:
-            feed = Parser().parse_string(data)
+            parser = Parser()
+            feed = parser.parse_string(data)
+            parser.free()
         except ParseError:
             if feedparser:
                 return feedparser.parse(file_stream_or_string)
