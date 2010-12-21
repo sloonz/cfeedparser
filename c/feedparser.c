@@ -15,7 +15,7 @@
 
 // ~ pkg: libxml-2.0 glib-2.0
 // ~ cflags: -O4 -Wall
-// ~ out: _feedparser.so
+// ~ out: libfeedparser.so
 // ~ ldflags: -shared
 
 #include <string.h>
