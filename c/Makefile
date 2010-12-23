@@ -66,5 +66,5 @@ feedparser.o: feedparser.c /usr/include/glib-2.0/glib.h \
  /usr/include/libxml2/libxml/xlink.h /usr/include/libxml2/libxml/SAX2.h \
  /usr/include/libxml2/libxml/xmlmemory.h \
  /usr/include/libxml2/libxml/threads.h feedparser.h
-	gcc -c feedparser.c -o feedparser.o -O4 -Wall  -I/usr/include/libxml2 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
+	gcc -c feedparser.c -o feedparser.o -O4 -Wall -fPIC  -I/usr/include/libxml2 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
 
