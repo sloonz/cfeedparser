@@ -125,6 +125,7 @@ func ParseURL(url *http.URL) (*Feed, os.Error) {
 		return nil, err
 	}
 	conn := http.NewClientConn(tconn, nil)
+	tconn.SetTimeout(30)
 	defer tconn.Close()
 
 	// Send request
