@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 	"http"
+	"url"
 	"net"
 	"strings"
 	"io/ioutil"
@@ -114,49 +115,49 @@ func ParseFile(file string) (*Feed, os.Error) {
 	return parseFeed(feed), nil
 }
 
-func ParseURL(url *http.URL) (*Feed, os.Error) {
+func ParseURL(u *url.URL) (*Feed, os.Error) {
 	// Open connection
-	host := url.Host
+	host := u.Host
 	if !strings.Contains(host, ":") {
 		host += ":80"
 	}
-	tconn, err := net.Dial("tcp", "", host)
+	tconn, err := net.Dial("tcp", host)
 	if err != nil {
 		return nil, err
 	}
 	conn := http.NewClientConn(tconn, nil)
-	tconn.SetTimeout(30*1e9)
+	tconn.SetTimeout(30 * 1e9)
 	defer tconn.Close()
 
 	// Send request
 	req := new(http.Request)
 	req.Method = "GET"
-	req.URL = url
+	req.URL = u
 	err = conn.Write(req)
 	if err != nil {
 		return nil, err
 	}
 
 	// Read response
-	resp, err := conn.Read()
+	resp, err := conn.Read(req)
 	if err != nil && err != http.ErrPersistEOF {
 		return nil, err
 	}
 
-	if resp.StatusCode / 100 == 3 {
-		loc, err := http.ParseURL(resp.Header["Location"])
+	if resp.StatusCode/100 == 3 {
+		loc, err := url.Parse(resp.Header["Location"][0])
 		if err != nil {
 			return nil, err
 		}
 		if loc.Scheme == "" {
-			if (len(loc.Path) == 0 || loc.Path[0] != byte('/')) && url.Path != "" {
-				idx := strings.LastIndex(url.Path, "/")
+			if (len(loc.Path) == 0 || loc.Path[0] != byte('/')) && u.Path != "" {
+				idx := strings.LastIndex(u.Path, "/")
 				if idx != -1 {
-					loc.Path = url.Path[:idx] + "/" + loc.Path
+					loc.Path = u.Path[:idx] + "/" + loc.Path
 				}
 			}
-			loc.Scheme = url.Scheme
-			loc.Host = url.Host
+			loc.Scheme = u.Scheme
+			loc.Host = u.Host
 		}
 		return ParseURL(loc)
 	}
