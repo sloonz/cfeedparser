@@ -1,7 +1,6 @@
 package feedparser
 
 // #cgo pkg-config: libxml-2.0 glib-2.0
-// #include "feedparser.c"
 // static Entry *getEntry(Feed *feed, int entry) { return feed->entries[entry]; }
 import "C"
 import (
