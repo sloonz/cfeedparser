@@ -1,21 +1,22 @@
 package feedparser
 
-// #include "../c/feedparser.h"
+// #cgo pkg-config: libxml-2.0 glib-2.0
+// #include "feedparser.c"
 // static Entry *getEntry(Feed *feed, int entry) { return feed->entries[entry]; }
 import "C"
 import (
-	"os"
-	"time"
-	"http"
-	"url"
-	"net"
-	"strings"
 	"io/ioutil"
+	"net"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"strings"
+	"time"
 )
 
 type Error string
 
-func (e Error) String() string {
+func (e Error) Error() string {
 	return strings.TrimSpace(string(e))
 }
 
@@ -26,7 +27,7 @@ type Author struct {
 type Entry struct {
 	Id, Title, Link, Summary, Content             string
 	PublicationDate, ModificationDate             string
-	PublicationDateParsed, ModificationDateParsed *time.Time
+	PublicationDateParsed, ModificationDateParsed time.Time
 	Subtitle, LinkTitle                           string
 	Author                                        Author
 }
@@ -35,12 +36,12 @@ type Feed struct {
 	Entries                                       []Entry
 	Id, Title, Link, Description                  string
 	PublicationDate, ModificationDate             string
-	PublicationDateParsed, ModificationDateParsed *time.Time
+	PublicationDateParsed, ModificationDateParsed time.Time
 	Subtitle, LinkTitle                           string
 	Author                                        Author
 }
 
-func parseDate(date string) *time.Time {
+func parseDate(date string) time.Time {
 	for _, layout := range []string{time.RFC822, time.RFC822Z, time.RFC3339, time.RFC1123, time.RFC850, time.RubyDate, time.UnixDate, time.ANSIC} {
 		parsed, _ := time.Parse(layout, date)
 		if parsed != nil {
@@ -91,7 +92,7 @@ func parseFeed(cfeed *C.Feed) (feed *Feed) {
 	return feed
 }
 
-func ParseString(data string) (*Feed, os.Error) {
+func ParseString(data string) (*Feed, error) {
 	parser := C.feed_parser_new()
 	defer C.feed_parser_free(parser)
 
@@ -103,7 +104,7 @@ func ParseString(data string) (*Feed, os.Error) {
 	return parseFeed(feed), nil
 }
 
-func ParseFile(file string) (*Feed, os.Error) {
+func ParseFile(file string) (*Feed, error) {
 	parser := C.feed_parser_new()
 	defer C.feed_parser_free(parser)
 
@@ -115,7 +116,7 @@ func ParseFile(file string) (*Feed, os.Error) {
 	return parseFeed(feed), nil
 }
 
-func ParseURL(u *url.URL) (*Feed, os.Error) {
+func ParseURL(u *url.URL) (*Feed, error) {
 	// Open connection
 	host := u.Host
 	if !strings.Contains(host, ":") {
@@ -125,7 +126,7 @@ func ParseURL(u *url.URL) (*Feed, os.Error) {
 	if err != nil {
 		return nil, err
 	}
-	conn := http.NewClientConn(tconn, nil)
+	conn := httputil.NewClientConn(tconn, nil)
 	tconn.SetTimeout(30 * 1e9)
 	defer tconn.Close()
 
@@ -140,7 +141,7 @@ func ParseURL(u *url.URL) (*Feed, os.Error) {
 
 	// Read response
 	resp, err := conn.Read(req)
-	if err != nil && err != http.ErrPersistEOF {
+	if err != nil && err != httputil.ErrPersistEOF {
 		return nil, err
 	}
 
