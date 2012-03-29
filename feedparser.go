@@ -1,6 +1,7 @@
 package feedparser
 
 // #cgo pkg-config: libxml-2.0 glib-2.0
+// #include "feedparser.h"
 // static Entry *getEntry(Feed *feed, int entry) { return feed->entries[entry]; }
 import "C"
 import (
@@ -42,12 +43,12 @@ type Feed struct {
 
 func parseDate(date string) time.Time {
 	for _, layout := range []string{time.RFC822, time.RFC822Z, time.RFC3339, time.RFC1123, time.RFC850, time.RubyDate, time.UnixDate, time.ANSIC} {
-		parsed, _ := time.Parse(layout, date)
-		if parsed != nil {
+		parsed, err := time.Parse(layout, date)
+		if err == nil {
 			return parsed
 		}
 	}
-	return nil
+	return time.Time{}
 }
 
 func parseEntry(entry *Entry, centry *C.Entry) {
@@ -126,7 +127,8 @@ func ParseURL(u *url.URL) (*Feed, error) {
 		return nil, err
 	}
 	conn := httputil.NewClientConn(tconn, nil)
-	tconn.SetTimeout(30 * 1e9)
+	d, _ := time.ParseDuration("30s")
+	tconn.SetDeadline(time.Now().Add(d))
 	defer tconn.Close()
 
 	// Send request

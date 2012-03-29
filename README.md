@@ -65,3 +65,10 @@ Parser. There is three ways to use them:
    will automatically be handled by Universal Feed Parser (you have an
    overhead only for ill-formed feeds)
 
+## The Go bindings
+
+With the `go` tool, you can just add 
+
+    import "github.com/sloonz/cfeedparser"
+
+to your imports, and then use `feedparser.ParseFile` and `feedparser.ParseURL`
