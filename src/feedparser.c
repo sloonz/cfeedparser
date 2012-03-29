@@ -173,7 +173,8 @@ static void process_characters(void *parser, const xmlChar *data, int size)
         free(escaped);
 }
 
-#define NEXT_ATTRIBUTE c_attrname = *c_attrs++, c_attrns = *c_attrs++, c_attrnsurl = *c_attrs++, c_attrvalstart = *c_attrs++, c_attrvalend = *c_attrs++
+#define NEXT_ATTRIBUTE c_attrname = *c_attrs++, c_attrns = *c_attrs++, c_attrnsurl = *c_attrs++, c_attrvalstart = *c_attrs++, c_attrvalend = *c_attrs++, \
+                                    (void)c_attrname, (void)c_attrns, (void)c_attrnsurl, (void)c_attrvalstart, (void)c_attrvalend
 #define EACH_ATTRIBUTE if(attributes) for(c_attrs = (const char**)attributes, i = 0, NEXT_ATTRIBUTE; i < nb_attributes; i++, NEXT_ATTRIBUTE)
 
 static void find_link(int nb_attributes, const xmlChar **attributes, char **href, char **title)
