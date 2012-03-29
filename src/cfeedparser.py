@@ -18,7 +18,7 @@ import os
 import ctypes
 import UserDict
 
-_libpath = os.path.join(os.path.dirname(__file__) or ".", "_feedparser.so")
+_libpath = os.path.join(os.path.dirname(__file__) or ".", "libfeedparser.so")
 _lib = ctypes.cdll.LoadLibrary(_libpath)
 
 def _copystr(s):
