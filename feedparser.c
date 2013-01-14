@@ -62,7 +62,7 @@ static const char *known_feed_tags[] = {"title", "link", "id", "author", "subtit
     DATE_TAGS, NULL};
 static const char *known_entry_tags[] = {"link", "title", "creator", "author", "body",
     "link", "id", "guid", "description", "summary", "content", "encoded", "abstract",
-    "fullitem", "subtitle",
+    "fullitem", "subtitle", "enclosure",
     DATE_TAGS, NULL};
 static const char *known_author_tags[] = {"name", "email", "uri", "url", "homepage", NULL};
 
@@ -353,6 +353,11 @@ static void process_start_element(void *parser,
                 PARSER->current_author = (struct _Author*)&PARSER->entry->author;
             } else if(!strcasecmp(c_name, "link") && PARSER->entry->link == NULL) {
                 find_link(nb_attributes, attributes, &PARSER->entry->link, &PARSER->entry->link_title);
+            } else if(!strcasecmp(c_name, "enclosure") && !PARSER->entry->enclosure) {
+                EACH_ATTRIBUTE {
+                    if(!strcasecmp(c_attrname, "url"))
+                        PARSER->entry->enclosure = strndup(c_attrvalstart, c_attrvalend - c_attrvalstart);
+                }
             }
         }
         return;

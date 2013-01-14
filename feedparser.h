@@ -23,6 +23,7 @@ typedef struct {
     char *modification_date;
     char *subtitle;
     char *link_title;
+    char *enclosure;
     struct {
         char *name;
         char *email;

@@ -37,6 +37,7 @@ class _EntryStruct(ctypes.Structure):
                 ('updated', ctypes.c_char_p),
                 ('subtitle', ctypes.c_char_p),
                 ('link_title', ctypes.c_char_p),
+                ('enclosure', ctypes.c_char_p),
                 ('author_name', ctypes.c_char_p),
                 ('author_email', ctypes.c_char_p),
                 ('author_url', ctypes.c_char_p),

@@ -29,6 +29,7 @@ type Entry struct {
 	PublicationDate, ModificationDate             string
 	PublicationDateParsed, ModificationDateParsed time.Time
 	Subtitle, LinkTitle                           string
+	Enclosure                                     string
 	Author                                        Author
 }
 
@@ -63,6 +64,7 @@ func parseEntry(entry *Entry, centry *C.Entry) {
 	entry.ModificationDateParsed = parseDate(entry.ModificationDate)
 	entry.Subtitle = C.GoString(centry.subtitle)
 	entry.LinkTitle = C.GoString(centry.link_title)
+	entry.Enclosure = C.GoString(centry.enclosure)
 	entry.Author.Name = C.GoString(centry.author.name)
 	entry.Author.Email = C.GoString(centry.author.email)
 	entry.Author.Uri = C.GoString(centry.author.uri)
