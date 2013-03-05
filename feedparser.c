@@ -257,7 +257,7 @@ static void fix_author(struct _Author *author, char **text)
 static char *unpack_text(FeedParser *parser)
 {
     char *text = g_string_free(parser->text, 0), *buf;
-    unsigned int _unused;
+    gsize _unused;
     
     if(parser->base64 && *text) {
         buf = text;
