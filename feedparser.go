@@ -6,7 +6,6 @@ package feedparser
 import "C"
 import (
 	"io/ioutil"
-	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -119,31 +118,7 @@ func ParseFile(file string) (*Feed, error) {
 }
 
 func ParseURL(u *url.URL) (*Feed, error) {
-	// Open connection
-	host := u.Host
-	if !strings.Contains(host, ":") {
-		host += ":80"
-	}
-	tconn, err := net.Dial("tcp", host)
-	if err != nil {
-		return nil, err
-	}
-	conn := httputil.NewClientConn(tconn, nil)
-	d, _ := time.ParseDuration("30s")
-	tconn.SetDeadline(time.Now().Add(d))
-	defer tconn.Close()
-
-	// Send request
-	req := new(http.Request)
-	req.Method = "GET"
-	req.URL = u
-	err = conn.Write(req)
-	if err != nil {
-		return nil, err
-	}
-
-	// Read response
-	resp, err := conn.Read(req)
+	resp, err := http.Get(u.String())
 	if err != nil && err != httputil.ErrPersistEOF {
 		return nil, err
 	}
