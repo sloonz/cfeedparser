@@ -13,11 +13,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-// ~ pkg: libxml-2.0 glib-2.0
-// ~ cflags: -O4 -Wall -fPIC
-// ~ out: libfeedparser.so
-// ~ ldflags: -shared
-
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
