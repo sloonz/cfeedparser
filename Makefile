@@ -1,6 +1,21 @@
+PKGCONFIG ?= pkg-config
+CC ?= gcc
+
+cflags := $(shell ${PKGCONFIG} --cflags glib-2.0 libxml-2.0)
+libs := $(shell ${PKGCONFIG} --libs glib-2.0 libxml-2.0)
+
+.PHONY: all clean tests
+
+all: libfeedparser.so
+
 libfeedparser.so: feedparser.o
-	gcc feedparser.o -o libfeedparser.so -shared -lxml2 -lglib-2.0 
+	${CC} feedparser.o -o libfeedparser.so -shared ${libs}
 
 feedparser.o: feedparser.c feedparser.h
-	gcc -c feedparser.c -o feedparser.o -O4 -Wall -fPIC  -I/usr/include/libxml2 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
+	${CC} -c feedparser.c -o feedparser.o -O4 -Wall -fPIC ${cflags}
 
+clean:
+	rm -f feedparser.o libfeedparser.so
+
+tests: libfeedparser.so
+	python cfeedparsertest.py
