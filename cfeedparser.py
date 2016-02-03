@@ -101,7 +101,7 @@ class Parser(object):
     _feed_free = _lib.feed_free
     
     def __init__(self):
-        self.__ptr = self._new_parser()
+        self.__ptr = ctypes.c_void_p(self._new_parser())
     
     def parse_file(self, file):
         return self._convert_feed(self._parse_file(self.__ptr, ctypes.c_char_p(file)))
