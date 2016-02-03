@@ -3,4 +3,5 @@ install:
   - sudo apt-get update
   - sudo apt-get install python2.7 build-essential libglib2.0-dev libxml2-dev
 script:
+  - make
   - python2 cfeedparsertest.py
