@@ -65,6 +65,8 @@ Parser. There is three ways to use them:
    will automatically be handled by Universal Feed Parser (you have an
    overhead only for ill-formed feeds)
 
+Python 3 is supported, but only in the standalone mode.
+
 ## The Go bindings
 
 With the `go` tool, you can just add 
